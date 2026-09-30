@@ -1,76 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import ConnectButton from "./components/ConnectButton";
+import { useWalletConnection } from "./hooks/useWalletConnection";
 
 function App() {
-  const [account, setAccount]= useState("");
-  const [chainId, setChainId] = useState("0");
-  const [balance, setBalance] = useState("0");
-
-
-
-  async function setup() {
-
-
-    const accounts = await window.ethereum.request (({
-
-      method :"eth_requestAccounts"
-
-      
-    }));
-
-    const chainId = await window.ethereum.request({
-      method : "eth_chainId"
-    });
-
-    setChainId(parseInt(chainId, 16));
-
-
-
-    console.log(accounts);
-    console.log (`hexadecimal string : $[chainId]`);
-    console.log ("ETH Balance:", balance);
-
-    console.log(accounts);
-
-
-    
-
-    
-    window.ethereum.on("connect",() =>{
-      console.log ("connected");
-    });
-
-    window.ethereum.on("accountsChanged",(accounts)=>{
-      setAccount(accounts[0]);
-      console.log("account changed:", accounts);
-    });
-
-    window.ethereum.on("chainChanged",(chainId)=>{
-      setChainId(parseInt(chainId, 16));
-      console.log("account changed:", accounts);
-    }); 
-
-
-
-  }
-  setup();
-  
- useEffect(() =>{
-  setup();
-
- },[]);
+  const { account, chainId, balance } = useWalletConnection();
 
 
   return (
     <div>
-      <EIP6963 />
+      <h1 style={{ margin: "20px" }}>EIP 1193</h1>
+      {account && (
+        <>
+          <p>Account: {account}</p>
+        </>
+      )}
+      {chainId && (
+        <>
+          <p>Chainid: {chainId}</p>
+        </>
+      )}
 
-
-       <p>Chain Id: {chainId} </p>
-       <p>Connected Address {account}</p>
+      {balance && (
+        <>
+          <p>Balance: {balance}</p>
+        </>
+      )}
+      <ConnectButton />
     </div>
   );
-
-
 }
 
 export default App;
